@@ -24,8 +24,23 @@ public final class R {
         public static final int grass9=0x7f02000a;
         public static final int guideline_overlay=0x7f02000b;
         public static final int ic_launcher=0x7f02000c;
-        public static final int template=0x7f02000d;
-        public static final int tile_sand=0x7f02000e;
+        public static final int joystick=0x7f02000d;
+        public static final int joystick_inner=0x7f02000e;
+        public static final int joystick_inner_template=0x7f02000f;
+        public static final int joystick_template=0x7f020010;
+        public static final int player_e=0x7f020011;
+        public static final int player_n=0x7f020012;
+        public static final int player_ne=0x7f020013;
+        public static final int player_nw=0x7f020014;
+        public static final int player_pack=0x7f020015;
+        public static final int player_pack_template=0x7f020016;
+        public static final int player_s=0x7f020017;
+        public static final int player_se=0x7f020018;
+        public static final int player_sw=0x7f020019;
+        public static final int player_template=0x7f02001a;
+        public static final int player_w=0x7f02001b;
+        public static final int template=0x7f02001c;
+        public static final int tile_sand=0x7f02001d;
     }
     public static final class id {
         public static final int menu_settings=0x7f060000;

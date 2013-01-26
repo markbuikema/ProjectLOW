@@ -1,9 +1,6 @@
 package com.markbuikema.projectlow.model;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -15,7 +12,8 @@ public class Map {
 
 	private final static String TAG = "ProjectLow Map";
 
-	
+	private ArrayList<Enemy> enemies;
+	private ArrayList<Player> players;
 
 	// The tiles. Key of root map is x. Value of root map is a Map with key y and
 	// value tile.
@@ -24,10 +22,12 @@ public class Map {
 	public Map() {
 		tiles = new HashMap<Integer, HashMap<Integer, Tile>>();
 
+		players = new ArrayList<Player>();
+		enemies = new ArrayList<Enemy>();
 		
+		players.add(new Player());
 
 	}
-
 
 	/**
 	 * Returns the tile at the given coordinates
@@ -63,21 +63,29 @@ public class Map {
 		}
 	}
 
-
 	public void draw(GL10 gl) {
 		for (Entry<Integer, HashMap<Integer, Tile>> x : tiles.entrySet()) {
 			for (Entry<Integer, Tile> y : x.getValue().entrySet()) {
 				y.getValue().draw(gl);
 			}
 		}
+		for (Player p: players) {
+			p.draw(gl);
+		}
 	}
-
 
 	public void loadTextures(GL10 gl) {
 		for (Entry<Integer, HashMap<Integer, Tile>> x : tiles.entrySet()) {
 			for (Entry<Integer, Tile> y : x.getValue().entrySet()) {
 				y.getValue().loadGLTexture(gl, ContextProvider.getInstance().getContext());
 			}
-		}		
+		}
+		for (Player p: players) {
+			p.loadGLTexture(gl, ContextProvider.getInstance().getContext());
+		}
+	}
+
+	public Player getPlayer() {
+		return players.get(0);
 	}
 }

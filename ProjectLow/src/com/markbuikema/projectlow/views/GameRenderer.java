@@ -1,7 +1,5 @@
 package com.markbuikema.projectlow.views;
 
-import java.util.ArrayList;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -9,42 +7,35 @@ import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
 
+import com.markbuikema.projectlow.ContextProvider;
 import com.markbuikema.projectlow.Tools;
-import com.markbuikema.projectlow.model.Enemy;
 import com.markbuikema.projectlow.model.Map;
-import com.markbuikema.projectlow.model.Player;
 import com.markbuikema.projectlow.model.TileType;
+import com.markbuikema.projectlow.ui.JoyStickSocket;
 
 public class GameRenderer implements Renderer {
 
-	public static final String TAG = "ProjectLow PlayView";
-	public static final int ZOOM = 6;
+	public static final String TAG = "ProjectLow GameRenderer";
 
-	private ArrayList<Enemy> enemies;
-	private ArrayList<Player> players;
 	private Map currentMap;
-	private int xOffset = 0;
-	private int yOffset = 0;
-	private Context context;
+	private JoyStickSocket joyStick;
+	private float xOffset = 0;
+	private float yOffset = 0;
 	
-	public static int depth = 0;
 
 	public GameRenderer(Context context) {
-		this.context = context;
-		players = new ArrayList<Player>();
-		enemies = new ArrayList<Enemy>();
 
 		currentMap = new Map();
+		joyStick = new JoyStickSocket();
 
 		// populate the map with tiles
 
 		for (int x = -Tools.MAP_WIDTH; x < Tools.MAP_WIDTH; x++) {
 			for (int y = -Tools.MAP_HEIGHT; y < Tools.MAP_HEIGHT; y++) {
 				currentMap.putTile(x, y, TileType.GRASS);
-				depth++;
 			}
 		}
-
+		
 	}
 
 	public TileType randomType() {
@@ -65,7 +56,7 @@ public class GameRenderer implements Renderer {
 	 *          whether the passed parameters should be added to its original
 	 *          values
 	 */
-	public void setOffset(int xOffset, int yOffset, boolean append) {
+	public void setOffset(float xOffset, float yOffset, boolean append) {
 		if (append) {
 			this.xOffset += xOffset;
 			this.yOffset += yOffset;
@@ -79,6 +70,7 @@ public class GameRenderer implements Renderer {
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		gl.glDisable(GL10.GL_DITHER);
 		currentMap.loadTextures(gl);
+		joyStick.loadGLTexture(gl, ContextProvider.getInstance().getContext());
 
 		gl.glClearColor(0f, 0f, 0f, 1f);
 		gl.glClearDepthf(1f);
@@ -92,26 +84,37 @@ public class GameRenderer implements Renderer {
 
 		// Really Nice Perspective Calculations
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-
+		
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		gl.glLoadIdentity();
 	}
 
 	@Override
 	public void onDrawFrame(GL10 gl) {
 
+
+		
 		gl.glEnable(GL10.GL_DITHER);
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
+	
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
+		 
 
+
+		GLU.gluLookAt(gl, 0, 0, Tools.ZOOM, 0, 0, 0, 0, 2, 0);
+
+		gl.glPushMatrix();
 		gl.glTranslatef(xOffset, yOffset, 0.0f);
-
-		GLU.gluLookAt(gl, 0, 0, ZOOM, 0, 0, 0, 0, 2, 0);
-
 		currentMap.draw(gl);
+		gl.glPopMatrix();
+		
+		joyStick.draw(gl);
+		
 		Tools.recycleBitmaps();
 
 	}
@@ -122,8 +125,27 @@ public class GameRenderer implements Renderer {
 		float ratio = (float) width / height;
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
+
 		gl.glFrustumf(-ratio, ratio, -1, 1, 1, 25);
 
 	}
+
+	public JoyStickSocket getJoyStick() {
+		return joyStick;
+	}
+
+	public Map getCurrentMap() {
+		return currentMap;
+	}
+
+	public float getXOffset() {
+		return xOffset;
+	}
+	
+	public float getYOffset() {
+		return yOffset;
+	}
+
+	
 
 }

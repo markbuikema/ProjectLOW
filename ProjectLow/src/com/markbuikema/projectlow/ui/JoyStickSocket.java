@@ -1,4 +1,4 @@
-package com.markbuikema.projectlow.model;
+package com.markbuikema.projectlow.ui;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -9,20 +9,28 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Address;
 import android.opengl.GLUtils;
+import android.util.Log;
 
-import com.markbuikema.projectlow.Tools;
+import com.markbuikema.projectlow.ContextProvider;
+import com.markbuikema.projectlow.R;
 
-/**
- * @author Mark
- * 
- */
-public class Tile {
+public class JoyStickSocket {
+	
+	private final static String TAG = "ProjectLow JoyStickSocket";
 
-	private final static String TAG = "ProjectLow Tile";
+	private JoyStick stick;
+	
+	private boolean pressed;
 
 	private FloatBuffer vertBuffer;
-	private float[] vertices = { -1.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f };
+	private float[] vertices = {
+				-10.0f, -5.0f, 0.0f,
+				-10.0f, -1.0f, 0.0f,
+				-6.0f, -5.0f, 0.0f, 
+				-6.0f, -1.0f, 0.0f };
 
 	private FloatBuffer textureBuffer;
 	private float[] texture = { 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f };
@@ -32,29 +40,7 @@ public class Tile {
 
 	private int[] textures = new int[1];
 
-	private TileType tileType;
-	private int x;
-	private int y;
-
-	public Tile(int x, int y, TileType type) {
-		// store the passed parameters
-		this.x = x;
-		this.y = y;
-
-		float a = (float) Tools.TILE_ASPECT_RATIO;
-
-		float left = x - y - 1;
-		float right = left + 2.0f;
-		float bottom = -(2 * a * x) - (2 * a * y) - 1;
-		float top = bottom + 2.0f;
-
-		vertices = new float[] { left, bottom, 0.0f, left, top, 0.0f, right, bottom, 0.0f, right, top, 0.0f };
-
-		this.tileType = type;
-
-		// ensure the tile has a type
-		if (type == null)
-			type = TileType.GRASS;
+	public JoyStickSocket() {
 
 		// OpenGL initialization and memory allocation
 		ByteBuffer bBuff = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -74,15 +60,53 @@ public class Tile {
 		textureBuffer = bBuff.asFloatBuffer();
 		textureBuffer.put(texture);
 		textureBuffer.position(0);
+		
+		stick = new JoyStick();
 
 	}
 
-	public void setTileType(TileType tileType) {
-		this.tileType = tileType;
+	public boolean isPressed() {
+		return pressed;
+	}
+	
+	public JoyStick getStick() {
+		return stick;
+	}
+
+	public void show(float x, float y) {
+
+		if (x>0) return;
+		
+		float left = x-2.0f;
+		float top = y-2.0f;
+		float right = x+2.0f;
+		float bottom = y+2.0f;
+		
+		vertices = new float[] {
+					left,bottom,0.0f,
+					left,top,0.0f,
+					right,bottom,0.0f,
+					right,top,0.0f
+					
+		};
+		vertBuffer.put(vertices);
+		vertBuffer.position(0);
+
+		pressed = true;
+		
+		stick.show(x,y);
+		
+		
+		
+	}
+
+	public void hide() {
+		pressed = false;
+		stick.disappear();
 	}
 
 	public void loadGLTexture(GL10 gl, Context context) {
-		Bitmap bitmap = Tools.getTileBitmap(tileType);
+		Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.joystick);
 		gl.glGenTextures(1, textures, 0);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
@@ -90,12 +114,14 @@ public class Tile {
 
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
 
-		// bitmap.recycle();
+		stick.loadGLTexture(gl, context);
+		 bitmap.recycle();
 	}
 
 	public void draw(GL10 gl) {
-		
-		
+		if (!pressed)
+			return;
+
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 
 		gl.glFrontFace(GL10.GL_CW);
@@ -107,5 +133,13 @@ public class Tile {
 		gl.glDrawElements(GL10.GL_TRIANGLE_STRIP, pIndex.length, GL10.GL_UNSIGNED_SHORT, pBuff);
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		
+		stick.draw(gl);
+		
+		
+	}
+
+	public void moveStick(float glCoordX, float glCoordY) {
+		stick.moveTo(glCoordX, glCoordY);
 	}
 }

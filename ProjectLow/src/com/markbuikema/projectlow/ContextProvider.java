@@ -4,6 +4,8 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
+import com.markbuikema.projectlow.views.GameRenderer;
+
 public class ContextProvider {
 
 	private static final String TAG = "ProjectLow ContextProvider";
@@ -16,6 +18,11 @@ public class ContextProvider {
 	
 	public Context getContext() {
 		return context;
+	}
+	
+	public GameRenderer getRenderer() {
+		GameActivity activity = (GameActivity) context;
+		return (GameRenderer) activity.getRenderer();
 	}
 	
 	public GLSurfaceView getView() {
