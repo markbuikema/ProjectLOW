@@ -20,11 +20,12 @@ public class Map {
 	private HashMap<Integer, HashMap<Integer, Tile>> tiles;
 
 	public Map() {
+
 		tiles = new HashMap<Integer, HashMap<Integer, Tile>>();
 
 		players = new ArrayList<Player>();
 		enemies = new ArrayList<Enemy>();
-		
+
 		players.add(new Player());
 
 	}
@@ -61,6 +62,11 @@ public class Map {
 		} else {
 			tiles.get(x).put(y, new Tile(x, y, tileType));
 		}
+
+	}
+	
+	public TileType getTileType(int x, int y) {
+		return getTile(x,y).getTileType();
 	}
 
 	public void draw(GL10 gl) {
@@ -69,7 +75,7 @@ public class Map {
 				y.getValue().draw(gl);
 			}
 		}
-		for (Player p: players) {
+		for (Player p : players) {
 			p.draw(gl);
 		}
 	}
@@ -80,7 +86,7 @@ public class Map {
 				y.getValue().loadGLTexture(gl, ContextProvider.getInstance().getContext());
 			}
 		}
-		for (Player p: players) {
+		for (Player p : players) {
 			p.loadGLTexture(gl, ContextProvider.getInstance().getContext());
 		}
 	}

@@ -61,7 +61,7 @@ public class JoyStick {
 		textureBuffer = bBuff.asFloatBuffer();
 		textureBuffer.put(texture);
 		textureBuffer.position(0);
-
+		
 	}
 
 	public void show(float x, float y) {
@@ -79,9 +79,13 @@ public class JoyStick {
 		float distance = Tools.pythagoras(xFinger - initX, yFinger - initY);
 		if (distance > Tools.ZOOM * Tools.MAX_JOYSTICK_DISTANCE) {
 
-			this.x = initX + (float) (Tools.ZOOM * Tools.MAX_JOYSTICK_DISTANCE * Math.cos(getDirection()));
-			this.y = initY + (float) (Tools.ZOOM * Tools.MAX_JOYSTICK_DISTANCE * Math.sin(getDirection()));
+//			this.x = initX + (float) (Tools.ZOOM * Tools.MAX_JOYSTICK_DISTANCE * Math.cos(getDirection()));
+//			this.y = initY + (float) (Tools.ZOOM * Tools.MAX_JOYSTICK_DISTANCE * Math.sin(getDirection()));
 
+			this.x = initX + (Tools.ZOOM * Tools.MAX_JOYSTICK_DISTANCE * ((xFinger-initX)/distance));
+			this.y = initY + (Tools.ZOOM * Tools.MAX_JOYSTICK_DISTANCE * ((yFinger-initY)/distance));
+			
+			
 		} else {
 			this.xFinger = x;
 			this.yFinger = y;

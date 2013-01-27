@@ -72,7 +72,6 @@ public class Player {
 	public void setMovement(float x, float y) {
 		xMovement = x;
 		yMovement = y;
-		
 	}
 
 	public void loadGLTexture(GL10 gl, Context context) {

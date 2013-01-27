@@ -32,14 +32,14 @@ public class GameRenderer implements Renderer {
 
 		for (int x = -Tools.MAP_WIDTH; x < Tools.MAP_WIDTH; x++) {
 			for (int y = -Tools.MAP_HEIGHT; y < Tools.MAP_HEIGHT; y++) {
-				currentMap.putTile(x, y, TileType.GRASS);
+				currentMap.putTile(x, y, randomType());
 			}
 		}
 		
 	}
 
 	public TileType randomType() {
-		if (Math.random() > 0.3) {
+		if (Math.random() > 0.1) {
 			return TileType.GRASS;
 		} else
 			return TileType.SAND;
@@ -55,6 +55,7 @@ public class GameRenderer implements Renderer {
 	 * @param append
 	 *          whether the passed parameters should be added to its original
 	 *          values
+	 *          
 	 */
 	public void setOffset(float xOffset, float yOffset, boolean append) {
 		if (append) {

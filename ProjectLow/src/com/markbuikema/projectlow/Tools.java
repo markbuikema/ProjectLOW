@@ -33,24 +33,22 @@ public class Tools {
 	// The aspect ratio of a tile
 	public static final float TILE_ASPECT_RATIO = 0.3f;// 0.3125
 
-	//The speed of the player
+	// The speed of the player
 	public static final float PLAYER_SPEED = 0.08f;
 
-	//The maximum distance the joystick can be from the center of its socket, divided by ZOOM.
+	// The maximum distance the joystick can be from the center of its socket,
+	// divided by ZOOM.
 	public static final float MAX_JOYSTICK_DISTANCE = .25f;
 
-
-	//The distance to the edge of the screen, before the screen will start to move along with the character
+	// The distance to the edge of the screen, before the screen will start to
+	// move along with the character
 	public static final float MAX_DISTANCE_X = 5;
 	public static final float MAX_DISTANCE_Y = 4;
-	
-	//The currently lowest used depth
-	private static int depth_lowest = 0;
 
 	// Some bitmaps are stored here, to save memory
 	private static Bitmap[] grass;
 	private static int[] grassRes;
-
+	private static Bitmap sand;
 
 	public static void logConstants(String tag) {
 		Log.d(tag, "SCREEN_WIDTH = " + Tools.SCREEN_WIDTH);
@@ -84,6 +82,10 @@ public class Tools {
 			if (grass[random] == null || (grass[random] != null && grass[random].isRecycled()))
 				grass[random] = BitmapFactory.decodeResource(ContextProvider.getInstance().getContext().getResources(), grassRes[random]);
 			return grass[random];
+		case SAND:
+			if (sand == null || (sand != null && sand.isRecycled()))
+				sand = BitmapFactory.decodeResource(ContextProvider.getInstance().getContext().getResources(), R.drawable.tile_sand);
+			return sand;
 		default:
 			random = (int) (Math.random() * 11);
 			if (grass[random] == null || (grass[random] != null && grass[random].isRecycled()))
@@ -91,10 +93,6 @@ public class Tools {
 			return grass[random];
 		}
 
-	}
-
-	public static int getLowestDepth() {
-		return --depth_lowest;
 	}
 
 	public static void recycleBitmaps() {
@@ -114,9 +112,9 @@ public class Tools {
 	public static float glCoordY(float screenY) {
 		return (screenY - Tools.SCREEN_HEIGHT / 2) / (Tools.SCREEN_HEIGHT / 2) * -Tools.ZOOM * 1.033f;// 6.4
 	}
-	
+
 	public static float pythagoras(float a, float b) {
-		return (float) Math.sqrt(a*a+b*b);
+		return (float) Math.sqrt(a * a + b * b);
 	}
 
 }

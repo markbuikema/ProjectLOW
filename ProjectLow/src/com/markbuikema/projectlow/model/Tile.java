@@ -47,8 +47,9 @@ public class Tile {
 		float right = left + 2.0f;
 		float bottom = -(2 * a * x) - (2 * a * y) - 1;
 		float top = bottom + 2.0f;
-
-		vertices = new float[] { left, bottom, 0.0f, left, top, 0.0f, right, bottom, 0.0f, right, top, 0.0f };
+		
+		
+		vertices = new float[] { left, bottom, 0, left, top, 0, right, bottom, 0, right, top, 0 };
 
 		this.tileType = type;
 
@@ -75,6 +76,10 @@ public class Tile {
 		textureBuffer.put(texture);
 		textureBuffer.position(0);
 
+	}
+	
+	public TileType getTileType() {
+		return tileType;
 	}
 
 	public void setTileType(TileType tileType) {

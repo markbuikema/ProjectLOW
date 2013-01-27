@@ -14,7 +14,6 @@ import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.markbuikema.projectlow.ui.JoyStick;
 import com.markbuikema.projectlow.views.GameRenderer;
 
 public class GameActivity extends Activity {
